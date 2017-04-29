@@ -13,7 +13,7 @@
      */
     public static function getInstance(){
         if(self::$instance == null){
-             self::$instance = new Mysqli("localhost", "root", "" , "coding_society");
+             self::$instance = new Mysqli("localhost", "root", "" , "");
             if (self::$instance->connect_errno) {
                 echo "Failed to connect to MySQL: (" . self::$instance->connect_errno . ") " . self::$instance->connect_error;
             }
