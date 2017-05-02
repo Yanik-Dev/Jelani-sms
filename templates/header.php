@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Flat Admin V.3 - Free flat-design bootstrap administrator templates</title>
+  <title><?= $title ?></title>
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
 

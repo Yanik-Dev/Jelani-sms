@@ -1,4 +1,5 @@
-<?php require_once '../common/Databaseservice.php'; 
+<?php 
+require_once '../common/Databaseservice.php'; 
 	 
 /**
 * 
@@ -7,8 +8,14 @@ class AuthService
 {
 	public static function login($logUser)
 	{
-		$_data=database::getInstance()->query("select * from users where username ={ $logUser->getUsername()} and password={$logUser->getPassword()}");
-		var_dump($_data->fetch_assoc());
+		if( $statement = @database::getInstance()->prepare("select * from users where username = ? and password = ?")){
+			$statement->bind_param("s", $logUser->getUsername());
+			$statement->bind_param("s", $logUser->getPassword());
+			$statement->execute();
+
+			var_dump($statement->get_result());
+		}
 	} 
 	
 }
+?>

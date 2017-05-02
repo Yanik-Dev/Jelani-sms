@@ -1,6 +1,6 @@
 <?php 
 /**
-*user modle 
+*user model 
 *@author Alcardo Terlonge
 */
 class User {
@@ -14,15 +14,17 @@ class User {
 
 	public function setPassword($value='')
 	{
-		$this-> _password=$value;
+		$this->_password=$value;
 	}
 	
 	public function getUsername()
 	{
 		return $this->_username;
 	}
+	
 	public function getPassword()
 	{
 		return $this->_password;
 	}
 }
+?>
