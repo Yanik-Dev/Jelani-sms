@@ -10,11 +10,24 @@
  *  then access the associative arrays by.
  *  $_CONFIG["DATABASE"]["SERVER"] to get server name
  */
-$_CONFIG = [
-    "DATABASECONFIG" => [
-        "SERVER" =>"127.0.0.1",
-        "USERNAME" => "root",
-        "PASSWORD" => "",
-        "DATABASE" => "jelani_db"
-    ]
-];
+
+global $_CONFIG;
+
+#try to get configuration files
+$config_data = @file_get_contents(dirname(__FILE__).'/config.conf', false);
+
+
+#write configuration files to database if config file is not found
+if(!$config_data){
+    $_CONFIG = [
+        "DATABASECONFIG" => [
+            "SERVER" =>"127.0.0.1",
+            "USERNAME" => "root",
+            "PASSWORD" => "",
+            "DATABASE" => "jelani_db"
+        ]
+    ];
+    file_put_contents(dirname(__FILE__).'/config.conf', serialize($_CONFIG));
+}else{
+    $_CONFIG = unserialize($config_data);
+}
