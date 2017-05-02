@@ -16,19 +16,21 @@ $db_selected = mysqli_select_db($link, $_CONFIG["DATABASECONFIG"]["DATABASE"]);
 
 #check if database exist
 if (!$db_selected) {
-
+    #$commands = file_get_contents("./db.sql");   
+    #$this->_connection->multi_query($commands);
   if (mysqli_query($link, "CREATE DATABASE jelani_db")) {
      
      echo "Database my_db created successfully\n";
 
      #Make jelani_db the current database
      $db_selected = mysqli_select_db($link, $_CONFIG["DATABASECONFIG"]["DATABASE"]);
-
-     if ($result = mysqli_query($link, "SELECT * FROM school")) {
-        $count = mysqli_num_rows($result);
-        if($count < 1){      
-            mysqli_close($link);
-            header("Location: ./setup-account.php");
+     if (!$db_selected){
+        if ($result = mysqli_query($link, "SELECT * FROM school")) {
+            $count = mysqli_num_rows($result);
+            if($count < 1){      
+                mysqli_close($link);
+                header("Location: ./setup-account.php");
+            }
         }
      }
      
