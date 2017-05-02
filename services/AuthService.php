@@ -13,9 +13,17 @@ class AuthService
 			$statement->bind_param("s", $logUser->getPassword());
 			$statement->execute();
 
-			var_dump($statement->get_result());
+			if($rows = $statement->get_result()){
+				while($rows->fetch_assoc()){
+			       var_dump();
+				}
+			}
 		}
 	} 
+
+	public static function logout(){
+
+	}
 	
 }
 ?>

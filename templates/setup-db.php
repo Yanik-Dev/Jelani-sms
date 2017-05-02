@@ -49,7 +49,7 @@ include 'header.php';
           <div class="form-suggestion">
             Configure Database settings
           </div>
-          <form action="/" method="POST">
+          <form action="../actions/setup-db.php" method="POST">
               <div class="input-group">
                 <span class="input-group-addon" id="basic-addon1">
                   <i class="fa fa-server" aria-hidden="true"></i></span>
@@ -66,11 +66,7 @@ include 'header.php';
                 <input type="password" class="form-control" name="password" placeholder="Password" aria-describedby="basic-addon3">
               </div>
               <div class="text-center">
-                  <input type="submit" class="btn btn-primary btn-submit" value="Test Connection">   
-                  <div class="form-line">
-                    <div class="title">OR</div>
-                  </div>
-                  <input type="submit" class="btn btn-success btn-submit" value="Save">
+                  <input type="submit" name="submitBtn" class="btn btn-primary btn-submit" value="SAVE">   
               </div>
           </form>
         </div>

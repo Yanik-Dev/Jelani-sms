@@ -25,7 +25,8 @@ if(!$config_data){
             "USERNAME" => "root",
             "PASSWORD" => "",
             "DATABASE" => "jelani_db"
-        ]
+        ],
+        "SERVER" => "http://localhost/jelani-sms/"
     ];
     file_put_contents(dirname(__FILE__).'/config.conf', serialize($_CONFIG));
 }else{

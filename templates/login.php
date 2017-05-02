@@ -1,19 +1,7 @@
 <?php 
-$title = "Login";
-include 'header.php'; 
-
-include '../config/Setup.php';
-include '../models/User.php';
-include '../services/AuthService.php';
-
-if (isset($_POST['loginBtn'])) {
-  var_dump($_POST['password']);
-  $user=new User();
-  var_dump($_POST['password']);
-  $user->setUsername($_POST['username']);
-  $user->setPassword($_POST['password']);
-  AuthService::login($user);
-} 
+  $title = "Login";
+  include 'header.php'; 
+  include '../config/Setup.php';
 ?>
 <div class="app app-default">
 <div class="app-container app-login">
