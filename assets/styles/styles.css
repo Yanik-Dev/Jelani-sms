@@ -1,0 +1,8 @@
+.select2-container{
+    z-index: 9999999;
+}
+
+.modal{
+    z-index: 999999;
+}
+

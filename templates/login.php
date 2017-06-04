@@ -22,14 +22,14 @@
       <div class="app-block">
       <div class="app-form">
         <div class="form-header">
-          <div class="app-brand">
-            <span class="highlight">
-              <center> Jelani </center>
-            </span>
-            <br>School Management System
-            </div>
+              <center> <div class="app-brand"><span class="highlight">Jelani</span> SMS</div> </center>
         </div>
-        <form action="./login.php" method="post">
+          <?php if(isset($_GET['error'])): ?>
+          <div class="alert alert-danger  alert-dismissible" role="alert" id="error-alert">
+            <strong>Oops!</strong> Invalid username or password
+          </div>
+          <?php endif;?>
+        <form action="../actions/login-action.php" method="post">
             <div class="input-group">
               <span class="input-group-addon" id="basic-addon1">
                 <i class="fa fa-user" aria-hidden="true"></i></span>
@@ -41,9 +41,12 @@
               <input type="password" class="form-control" placeholder="Password" aria-describedby="basic-addon2" name="password" id="password">
             </div>
             <div class="text-center">
-                <input type="submit" class="btn btn-success btn-submit" value="Login" name="loginBtn" id="">
+                <input type="submit" class="btn btn-success btn-submit" value="Login" name="loginBtn">
             </div>
         </form>
      </div>
     </div>
- <?php include 'footer.php'; ?>
+    </div>
+    </div>
+    </div>
+    </div>

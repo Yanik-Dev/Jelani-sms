@@ -1,11 +1,9 @@
 <?php
+require (dirname(__FILE__).'./Config.php');
 
-include (dirname(__FILE__).'./Config.php');
-
-
-    
-if (!$link = @mysqli_connect( $_CONFIG["DATABASECONFIG"]["SERVER"]+'t',  $_CONFIG["DATABASECONFIG"]["USERNAME"],  $_CONFIG["DATABASECONFIG"]["PASSWORD"])) {
-    header("Location: ./setup-db.php");
+#check if database is configured
+if (!$link = @mysqli_connect( $_CONFIG["DATABASECONFIG"]["SERVER"],  $_CONFIG["DATABASECONFIG"]["USERNAME"],  $_CONFIG["DATABASECONFIG"]["PASSWORD"])) {
+    header("Location: ./setup.php?db=true");
 }
 
 #Make jelani_db the current database
@@ -33,11 +31,13 @@ if ($db_selected){
         $count = mysqli_num_rows($result);
         if($count < 1){      
             mysqli_close($link);
-            header("Location: ./setup-account.php");
+            header("Location: ./setup.php?account=true");
        }
-   }
+    }else{
+        mysqli_close($link);
+        header("Location: ./setup.php?account=true");
+    }
 }
 
 
 mysqli_close($link);
-?>

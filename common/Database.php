@@ -1,6 +1,6 @@
 <?php
 
-include_once("../config/Config.php");
+include_once(dirname(__FILE__)."/../config/Config.php");
 /**
  * Database class
  * Defines Database connection
@@ -25,6 +25,11 @@ include_once("../config/Config.php");
             }
         }
         return self::$instance;
+    }
+    
+    public static function close() {
+        self::$instance->close();
+        self::$instance = null;
     }
 }
 
