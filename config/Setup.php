@@ -27,7 +27,7 @@ $db_selected = mysqli_select_db($link, $_CONFIG["DATABASECONFIG"]["DATABASE"]);
 
 #check if school is in database
 if ($db_selected){
-    if ($result = mysqli_query($link, "SELECT * FROM school")) {
+    if ($result = mysqli_query($link, "SELECT * FROM schools")) {
         $count = mysqli_num_rows($result);
         if($count < 1){      
             mysqli_close($link);

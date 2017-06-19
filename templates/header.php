@@ -9,6 +9,7 @@
  
   <link rel="stylesheet" type="text/css" href=".././assets/vendor/css/vendor.css">
   <link rel="stylesheet" type="text/css" href=".././assets/vendor/css/flat-admin.css">
+  <link rel="stylesheet" type="text/css" href=".././assets/vendor/datepicker/css/bootstrap-datetimepicker.min.css">
   <link rel="stylesheet" type="text/css" href=".././assets/styles/styles.css">
 
 

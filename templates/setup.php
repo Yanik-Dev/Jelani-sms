@@ -2,6 +2,14 @@
 $title = "Jelani - Configurations";
 require 'header.php';
 require '../components/SetupComponent.php';
+require '../services/GradeService.php';
+
+if(isset($_GET['db']) || isset($_GET['account'])){
+    
+}else{
+    header("Location: ./login.php");
+}
+$availableForms = GradeService::findAllAvailableForms();
 ?>
 <div class="app app-default">
 <div class="app-container app-login"> 
@@ -75,7 +83,7 @@ require '../components/SetupComponent.php';
                         <?= SetupComponent::dbSetup() ?> 
                     </div>
                     <div role="tabpanel" class="tab-pane" id="account">
-                       <?= SetupComponent::accountSetup() ?> 
+                       <?= SetupComponent::accountSetup($availableForms) ?> 
                     </div>
                 </div>
               </div>

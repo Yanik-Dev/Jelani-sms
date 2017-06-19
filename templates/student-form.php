@@ -13,7 +13,6 @@ require_once dirname(__FILE__).'/../components/StudentComponent.php';
 $student=new Student();
 $guardian=new Guardian();
 $guardians = [];
-$classes = [];
 
 $classes = ClassService::findAll();
 
@@ -45,13 +44,13 @@ if(isset($_GET['id'])){
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="info">
            <div class="row"> 
-             <?= StudentComponent::studentForm('',$student, $classes);?>
+             <?= StudentComponent::studentForm($student, $classes); ?>
            </div>        
         </div>
         <?php if(isset($_GET['id'])): ?>
         <div role="tabpanel" class="tab-pane" id="parent">
             <div class="row"> 
-              <?= StudentComponent::parentComponent('', $guardians, $guardian); ?>
+              <?= StudentComponent::parentComponent($guardians, $guardian); ?>
             </div>
         </div>
         <?php endif;?>
@@ -69,11 +68,9 @@ if(isset($_GET['id'])){
           modules : 'html5'
       });
       /*$('#p').trigger('click');
-    $('#pnew').trigger('click');*/
+      ('#pnew').trigger('click');*/
   });
-
-    
-   
-  
-
+    $(function () {
+        $('#datetimepicker1').datetimepicker();
+    });
 </script>

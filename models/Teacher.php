@@ -1,5 +1,5 @@
 <?php
-require_once './User.php';
+require_once dirname(__FILE__).'/./User.php';
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -23,8 +23,9 @@ class Teacher extends User{
     public function getMaritalStatus(){ return $this->_maritalStatus; }
     public function setMaritalStatus($maritalStatus) { $this->_maritalStatus = $maritalStatus; }
     
-    public function getDateOfemployment(){ return $this->_dateOfemployment; }
-    public function setDateOfemployment($dateOfemployment) { $this->_dateOfemployment = $dateOfemployment; }
+    public function getDateOfEmployment(){ return $this->_dateOfemployment; }
+    public function setDateOfEmployment($dateOfemployment) { $this->_dateOfemployment = $dateOfemployment; }
+    
     
     
 }

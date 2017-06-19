@@ -47,7 +47,12 @@ if(isset($_GET['account'])){
         header("Location: ".$page);
         exit;
     }
-
+    
+    if(count($_POST["forms"]) < 1){
+        header("Location: ".$page);
+        exit;
+    }
+    
     if(!isset($_POST["password"])){
         header("Location: ".$page);
         exit;
@@ -58,7 +63,9 @@ if(isset($_GET['account'])){
         exit;
     }
     
+    $forms = $_POST["forms"];
     Database::getInstance()->autocommit (false);
+    #insert the school name
     if($statement = @Database::getInstance()->prepare("INSERT INTO school SET name = ?")){
       @$statement->bind_param("s", $_POST['schoolName']);
 
@@ -67,18 +74,32 @@ if(isset($_GET['account'])){
                 Database::getInstance()->rollback();
                 die();
             }
+            
+            #insert the grades associated with the school
+            foreach($forms as $form){
+                if($statement = @Database::getInstance()->prepare("INSERT INTO forms SET name = ?")){
+                   @$statement->bind_param("s", $form);
+                    if (!$statement->execute()) {
+                            echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
+                            Database::getInstance()->rollback();
+                            die();
+                    }
+                }
+            }
+            
+            #insert admin user
             $salt = Security::getSalt();
             $hash = Security::getHash($password, $salt);
             if( $statement = @Database::getInstance()->prepare("INSERT  INTO users SET username= ?, password = ?, "
                     . " salt= ?, role= 'ADMIN', is_activated = 'yes'")){
                 @$statement->bind_param("sss", $_POST['username'], $hash, $salt);
-                
+
                 if (!$statement->execute()) {
                     echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
                     Database::getInstance()->rollback();
                     die();
                 }
-                
+
                 Database::getInstance()->commit();
                 header("Location: ../templates/login.php");
                 exit;

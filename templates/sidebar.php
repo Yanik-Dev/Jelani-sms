@@ -16,7 +16,7 @@
           <div class="title">Dashboard</div>
         </a>
       </li>  
-      <li class="active">
+      <li>
         <a href="./student-view.php">
           <div class="icon">
             <i class="fa fa-child" aria-hidden="true"></i>
@@ -25,7 +25,7 @@
         </a>
       </li>  
       <li class="">
-        <a href="./index.html">
+          <a href="./teacher-view.php">
           <div class="icon">
             <i class="fa fa-female" aria-hidden="true"></i>
           </div>
@@ -33,7 +33,7 @@
         </a>
       </li>  
       <li class="">
-        <a href="./index.html">
+          <a href="./subject-view.php">
           <div class="icon">
             <i class="fa fa-book" aria-hidden="true"></i>
           </div>
@@ -42,7 +42,7 @@
       </li>   
        
       <li class="">
-        <a href="./index.html">
+          <a href="./classroom-view.php">
           <div class="icon">
             <i class="fa fa-female" aria-hidden="true"></i>
           </div>

@@ -13,7 +13,7 @@ class  StudentComponent{
         foreach($students as $student){
            $rows .='  
                 <tr>
-                <td>'.(($student->getPhoto()!=null)?'':'<img class="profile-img" style="width:50px; height:50px; border-radius: 50%;" src="../assets/img/profile.png">').'</td>
+                <td><img class="profile-img" style="width:50px; height:50px; border-radius: 50%;" src="'.(($student->getPhoto()!=null)?$student->getPhoto():'../assets/img/profile.png').'"></td>
                 <td>'.$student->getSRN().'</td>
                 <td>'.$student->getFirstName().' '.$student->getLastName().'</td> 
                 <td>'.$student->getGender().'</td>
@@ -21,7 +21,8 @@ class  StudentComponent{
                 <td>'.$student->getClass()->getName() .'</td>
                 <td>
                  <a href="./student-form.php?id='.$student->getId().'" class="btn btn-primary btn-xs">Edit</a>
-                 <a href="button" class="btn btn-default btn-xs">Grade</button>
+                 <a href="../actions/student-actions.php?id='.$student->getId().'&action=delete" class="btn btn-danger btn-xs">Delete</a>
+                 <a href="button" class="btn btn-default btn-xs">Grade</a>
              </td>
             </tr>';
         }
@@ -63,9 +64,10 @@ class  StudentComponent{
             </div>';
     }
     
-    public static function studentForm ($action='',$student, $classes=[], $errors = []){
+    public static function studentForm ($student, $classes=[], $errors = []){
         $options = "";
         $errorElement ="";
+        
         #populate option with classes for dropdown menu
         foreach($classes as $class){
            if($student->getClass() != null){
@@ -96,10 +98,10 @@ class  StudentComponent{
               <div class="card">
                 <div class="card-body">
                   <form id="studentForm" 
-                        action="'.$action.'"
+                        action="../actions/student-actions.php"
                         method="post" 
-                        class="form form-horizontal ajax">
-                    <input type="hidden" value="'.(($student->getId()!=null) ?$student->getId(): '').'" >
+                        enctype="multipart/form-data"
+                        class="form form-horizontal ajax-data">
                     <div class="section">                       
                         <div class="section-body">
                             <div class="alert alert-danger  alert-dismissible" role="alert" style="display:none" id="error-alert">
@@ -112,6 +114,22 @@ class  StudentComponent{
                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span></button>
                                Inserted Successfully
                             </div>
+                         <div class="form-group">
+                            <input type="hidden" name = "id" value="'.(($student->getId()!=null)?$student->getId():'').'">
+                            <div  class="col-md-3"> 
+                                <label style="width:100%">Photo</label>
+                                <img id="img-output"
+                                    src="'.(($student->getPhoto()!=null)?$student->getPhoto():'../assets/img/profile.png').'" 
+                                    class="img-circle" width="70px" height="70px">
+                            </div>
+                            <div class="col-md-9">   
+                                <div class="col-md-12">
+                                <input type="file" name="file" id="exampleInputFile" onchange="previewImage(event)">
+                                <p class="help-block">Select a photo to upload</p>
+                                </div>
+                            </div>
+
+                        </div>
                         <div class="form-group">
                             <label class="col-md-3 control-label">SRN</label>
                             <div class="col-md-9">   
@@ -146,7 +164,7 @@ class  StudentComponent{
                             </div>
                             <div class="col-md-4">
                                 <input type="text" 
-                                       value="'.(($student->getLastName()!=null)?$student->getLastName():'').'"
+                                       value="'.(($student->getMiddleName()!=null)?$student->getMiddleName():'').'"
                                        class="form-control" 
                                        name="middle_name" 
                                        placeholder="Middle Name">
@@ -157,11 +175,13 @@ class  StudentComponent{
                             <label class="col-md-3 control-label">Date of Birth</label>
                             <div class="col-md-9">
                                <div class="col-md-6">
-                                <input type="date" 
-                                       class="form-control" 
-                                       name="date_of_birth" 
-                                       placeholder="">
-                               </div>
+                                    <div class="input-group date" id="datetimepicker1" style="z-index: 99999999">
+                                        <input type="text" name="date_of_birth" class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -222,11 +242,13 @@ class  StudentComponent{
                                 <input type="text" 
                                        value="'.(($student->getContactNo1()!=null)?$student->getContactNo1():'').'"
                                        class="form-control" 
+                                       name="contact_no1"
                                        placeholder="(000) 000 0000">
                             </div>
                             <div class="col-md-6"> 
                                 <input type="text" 
                                        value="'.(($student->getContactNo2()!=null)?$student->getContactNo2():'').'"
+                                       name="contact_no2"
                                        class="form-control" 
                                        placeholder="(000) 000 0000">
                             </div>  
@@ -238,13 +260,10 @@ class  StudentComponent{
                                 <div class="col-md-6"> 
                                     <textarea class="form-control" 
                                               name="address" 
-                                              placeholder="street/district, city/town, province">
-                                             '.(($student->getAddress()!=null)?$student->getAddress():'').'</textarea>
+                                              placeholder="street/district, city/town, province">'.(($student->getAddress()!=null)?$student->getAddress():'').'</textarea>
                                 </div>    
                             </div>
                         </div>
-                        
-                    
                     </div>
                     <div class="form-footer">
                         <div class="form-group">
@@ -254,7 +273,7 @@ class  StudentComponent{
                                 <button type="reset" class="btn btn-default">Cancel</button>
                             </div> 
                         </div>
-                        </div>
+                    </div>
                     </div>
                   </form>
                  </div>
@@ -264,7 +283,7 @@ class  StudentComponent{
 
     }
     
-    public static function parentComponent($action, $guardians, $guardian, $errors=[]){
+    public static function parentComponent($guardians, $guardian, $errors=[]){
         $errorElement ="";
         $rows = "";
         
@@ -337,7 +356,7 @@ class  StudentComponent{
                 <div class="modal-content">
                  
                 '.$errorElement.'
-                  <form action="'.$action.'" class="ajax" id="guardianForm" method="post">
+                  <form action="../actions/parent-actions.php" class="ajax" id="guardianForm" method="post">
                       <input type="hidden" value="'.(($guardian->getId()!=null) ?$guardian->getId(): '').'" >
                       <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

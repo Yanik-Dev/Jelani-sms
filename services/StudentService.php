@@ -1,10 +1,11 @@
 <?php
 require_once dirname(__FILE__).'/../models/Student.php';
 require_once dirname(__FILE__).'/../models/Grade.php';
-
 require_once dirname(__FILE__).'/../models/Classroom.php';
 require_once dirname(__FILE__).'/../common/Security.php';
 require_once dirname(__FILE__).'/../common/Database.php';
+require_once dirname(__FILE__).'/../config/Config.php';
+
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -21,12 +22,13 @@ class StudentService {
 
     public static function insert($student){
         Database::getInstance()->autocommit (false);
-        if( $statement = @Database::getInstance()->prepare("INSERT INTO users SET role = ?, gender = ?, date_of_birth = ?, first_name = ?, "
+        if( $statement = @Database::getInstance()->prepare("INSERT INTO users SET photo= ?, role = ?, gender = ?, date_of_birth = ?, first_name = ?, "
                                                             . "last_name = ?, middle_name = ?, username = ?, "
                                                             . "password = ?, salt = ?, email = ?, address = ?, "
                                                             . "contact_no1 = ?, contact_no2 = ?, is_activated = 'yes'")){
-            @$statement->bind_param("sssssssssssss",      
-                                    $student->getRole(),                                       
+            @$statement->bind_param("ssssssssssssss",      
+                                    $student->getPhoto(),
+                                    $student->getRole(),   
                                     $student->getGender(),                                    
                                     $student->getDateOfBirth(),                                        
                                     $student->getFirstName(),                                        
@@ -44,7 +46,7 @@ class StudentService {
             if (!$statement->execute()) {
                 echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
                 Database::getInstance()->rollback();
-                die();
+                return false;
             }
             $fkUserId = $statement->insert_id;
             
@@ -54,33 +56,27 @@ class StudentService {
                                            $fkUserId,                                                  
                                            $student->getSRN(),                                               
                                            $student->getAcademicYear(),                                     
-                                           $student->getClass()->getClassId()
+                                           $student->getClass()->getId()
                                         );
                 
                 if (!$statement->execute()) {
                     echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
-                    
                     Database::getInstance()->rollback();
-                    die();
-                
+                    return false;
                 }
                 
                 Database::getInstance()->commit();
                 return true;
 
             }else{
-            echo "Execute failed: (" . Database::getInstance()->errno . ") " . Database::getInstance()->error;
-            var_dump(Database::getInstance());
+                echo "Execute failed: (" . Database::getInstance()->errno . ") " . Database::getInstance()->error;
                 Database::getInstance()->rollback();
-
-                die();
-            
-        }
+                return false;
+            }
         }else{
             echo "Execute failed: (" . Database::getInstance()->errno . ") " . Database::getInstance()->error;
-                Database::getInstance()->rollback();
-                die();
-            
+            Database::getInstance()->rollback();
+            return false;
         }
         
         Database::getInstance()->rollback();
@@ -112,17 +108,25 @@ class StudentService {
                                             $student->getId()
                                            );
 
-            $statement->execute();
+             if (!$statement->execute()) {
+                    echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
+                    Database::getInstance()->rollback();
+                    return false;
+                }
 
             if( $statement = @Database::getInstance()->prepare("UPDATE students SET srn = ?, "
-                                                                . " fk_academic_year = ?, fk_class_id = ? WHERE id = ?")){
-                $statement->bind_param("iiii",                                                 
+                                                                . " fk_academic_year_id = ?, fk_class_id = ? WHERE id = ?")){
+                @$statement->bind_param("iiii",                                                 
                                            $student->getSRN(),                                               
                                            $student->getAcademicYear(),                                     
-                                           $student->getClass()->getClassId(),
+                                           $student->getClass()->getId(),
                                            $student->getId()
                 );
-                $statement->execute();
+                if (!$statement->execute()) {
+                    echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
+                    Database::getInstance()->rollback();
+                    return false;
+                }
                 
                 Database::getInstance()->commit();
                 return true;
@@ -199,20 +203,24 @@ class StudentService {
     }
     
     public static function delete($student){
-        if( $statement = @Database::getInstance()->prepare("DELETE FROM students WHERE id = ?")){
-            $statement->bind_param("i", $student->getId());
+        $path = "";
+        if($statement = @Database::getInstance()->prepare("SELECT photo FROM users WHERE id = ?")){
+            @$statement->bind_param("i", $student->getId());
             $statement->execute();
-            return true;
+            if($rows = $statement->get_result()){
+                while($row = $rows->fetch_assoc()){
+                    $path = $row["photo"];
+                }
+            }
+            if( $statement = @Database::getInstance()->prepare("DELETE FROM users WHERE id = ?")){
+                @$statement->bind_param("i", $student->getId());
+                $statement->execute();
+                return ["status"=> true, "path"=>$path];
+            }
         }
-        return false;
+        return ["status" => false];
     }
     
-    public function getNextId(){
-        $db = Database::getInstance();
-        $result = $db->query('select id from albums order by id DESC LIMIT 0,1');
-        $this->_count = $result->fetch_assoc()['id'];
-        return (isset($this->_count))?$this->_count+1:1;
-    }
     
     public static function setStudentPassword($student){
         $salt = Security::getSalt();
@@ -222,27 +230,33 @@ class StudentService {
         return ["salt"=> $salt, "hash"=>$hash];
     }
     
-    public static function getStudentFromPost($postVar){
+    public static function getStudentFromPost($postVar, $filename=''){
         
         $classroom = new Classroom();
-        $classroom->setClassId($postVar['class']);
+        $classroom->setId($postVar['class']);
 
         $student = new Student();
         $student->setClass($classroom);
         $student->setAcademicYear(1);
+        
+        if(strcmp('', $filename)!= 0){
+            $student->setPhoto($filename);
+        }
         
         if(isset($postVar['srn'])){
             $student->setSRN($postVar['srn']);
         }
         $student->setFirstName($postVar['first_name']);
         $student->setLastName($postVar['last_name']);
+        
         if(isset($postVar['middle_name'])){
             $student->setMiddleName($postVar['middle_name']);
         }
         
         $student->setGender($postVar['gender']); 
-        $student->setDateOfBirth($postVar['date_of_birth']);
+        $student->setDateOfBirth(date("Y-m-d", strtotime($postVar['date_of_birth'])));
         $student->setRole("Student");
+        
         if(isset($postVar['email'])){
             $student->setEmail($postVar['email']);
         }
@@ -264,11 +278,12 @@ class StudentService {
     }
     
     public static function mapObjectFromArray($row){
+        global $_CONFIG;
         $grade = new Grade($row['fk_form_id'], $row['form_name']);
         $classroom = new Classroom($row['fk_class_id'], $row['class_name'], $grade);
         $student = new Student();
         $student->setClass($classroom);
-        $student->setPhoto($row['photo']);
+        $student->setPhoto((isset($row['photo']))?$_CONFIG["UPLOADDIR"].$row['photo']:null);
         $student->setSRN($row['srn']);
         $student->setId($row['id']);
         $student->setFirstName($row['first_name']);
@@ -286,6 +301,36 @@ class StudentService {
         $student->setContactNo1($row['contact_no1']);    
         $student->setContactNo2($row['contact_no2']);
         return $student;
+    }
+    
+    public static function validateInputs($input){
+        
+        if(filter_var($input['email'], FILTER_VALIDATE_EMAIL)){
+            
+        }
+        if(strcmp(trim($input['first_name'],"") == 0)){
+            
+        }
+        if(strcmp(trim($input['last_name'],"") == 0)){
+            
+        }
+        if(isset($input['gender'])){
+            
+        }
+        if(strcmp(trim($input['gender']),"Male") != 0 || strcmp(trim($input['gender']),"Female") != 0){
+                
+        }
+        if(isset($input['contact_no1'])){
+            
+        }
+        if(isset($input['date_of_birth'])){
+            
+        }
+        if(isset($input['class'])){
+            
+        }
+        
+        
     }
 }
 

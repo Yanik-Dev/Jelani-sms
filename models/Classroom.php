@@ -16,6 +16,9 @@ class Classroom {
     private $_classId;
     private $_className;
     private $_grade;
+    private $_teacher;
+    private $_subjects;
+    private $__teachers;
     
     public function __construct($id=0, $name="", $grade=null) {
         $this->_classId = $id;
@@ -32,5 +35,15 @@ class Classroom {
         
     public function getGrade() { return $this->_grade; }
     public function setGrade($grade) { $this->_grade = $grade; }
+    
+    public function getTeacher() { return $this->_teacher; }
+    public function setTeacher($teacher) { $this->_teacher = $teacher; }
+    
+    
+    public function getTeachers() { return $this->_teachers; }
+    public function setTeachers($teachers) { $this->_teachers = $teachers; }
+    
+    public function getSubjects() { return $this->_subjects; }
+    public function setSubjects($subjects) { $this->_subjects = $subjects; }
     
 }
