@@ -17,32 +17,33 @@ class  ClassroomComponent{
         $string = "";
         foreach($classes as $class){
             foreach($class->getTeachers() as $teacher){
-                $string .= $teacher->getFirstName().' '.$teacher->getLastName().'\n';
+                $string .= $teacher->getFirstName().' '.$teacher->getLastName().'<br />';
             }
-            $teacher[$i] = $string;
+            $teachers[$i] = $string;
             $i++;
         }
         $i=0;
         $string = "";
         foreach($classes as $class){
             foreach($class->getSubjects() as $subject){
-                $string .= $subject->getName().'\n';
+                $string .= $subject->getName().'<br />';
             }
             $subjects[$i] = $string;
             $i++;
         }
         $i=0;
-        //var_dump($classes);die();
+        
         foreach($classes as $class){
            $rows .='  
             <tr>
-                <td>'.$class->getId().'</td> 
                 <td>'.$class->getName().'</td>
-                <td>'.$class->getTeacher()->getId().'</td>
+                <td>'.$class->getGrade()->getName().'</td>
+                <td>'.$teacher->getFirstName().' '.$teacher->getLastName().'</td>
                 <td>'.$teachers[$i].'</td>
                 <td>'.$subjects[$i].'</td>
                 <td>
                  <a href="./classroom-form.php?id='.$class->getId().'" class="btn btn-primary btn-xs">Edit</a>
+                 <a href="./classroom-form.php?id='.$class->getId().'" class="btn btn-danger btn-xs">Delete</a>
                 </td>
             </tr>';
            $i++;
@@ -57,10 +58,10 @@ class  ClassroomComponent{
                   <table class="datatable table table-striped primary" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>Id</th>
                             <th>Class name</th>
-                            <th>Class teacher</th>
-                            <th>Class teachers</th>
+                            <th>Grade</th>
+                            <th>Form teacher</th>
+                            <th>Classroom teachers</th>
                             <th>Associated subjects</th>
                             <th> 
                             <a href="./classroom-form.php" 
@@ -81,33 +82,67 @@ class  ClassroomComponent{
     }
     
     public static function classForm ($class, $forms=[], $teachers=[], $subjects=[], $errors = []){
-        $options = "";
+        $formOptions = "";
         $teacherOptions = "";
+        $formTeacherOptions = "";
         $subjectOptions = "";
         $errorElement ="";
         #populate option with forms in dropdown menu
-        foreach($forms as $form){
-           if($class->getClass() != null){
-                if($class->getGrade()->getId() == $form->getId()){
-                     $options .='<option value="'.($form->getId().'" selected>'.$form->getName()).'</option>';
-                     continue;
+        foreach($teachers as $teacher){
+            if($class->getTeacher() != null){
+                if($class->getTeacher()->getId() == $teacher->getId()){
+                    $formTeacherOptions .='<option value="'.$teacher->getId().'" selected>'.$teacher->getFirstName().' '.$teacher->getLastName().'</option>'; 
+                    continue;
                 }
-           }
-           $options .='<option value="'.($form->getId().'">'.$form->getName()).'</option>';
-
+            }
+            $formTeacherOptions .='<option value="'.$teacher->getId().'">'.$teacher->getFirstName().' '.$teacher->getLastName().'</option>';
+        }
+        
+        #populate option with forms in dropdown menu
+        foreach($forms as $form){
+            if($class->getGrade() != null){
+                if($class->getGrade()->getId() == $form->getId()){
+                    $formOptions .='<option value="'.($form->getId().'" selected>'.$form->getName()).'</option>'; 
+                    continue;
+                }
+            }
+            $formOptions .='<option value="'.($form->getId().'">'.$form->getName()).'</option>';
         }
         
         #populate option with teachers in dropdown menu
         foreach($teachers as $teacher){
-           if(count($class->getTeachers()) > 0){
+          $found= 0;
+          if(count($class->getTeachers()) > 0){
                foreach($class->getTeachers() as $teach){
                     if($teach->getId() == $teacher->getId()){
-                         $teacherOptions .='<option value="'.($teacher->getId().'" selected>'.$teacher->getName()).'</option>';
-                         continue;
-                    }
+                        $found = 1;
+                        break;   
+                    } 
                }
            }
-           $teacherOptions .='<option value="'.($teacher->getId().'">'.$teacher->getName()).'</option>';
+           if($found){
+               $teacherOptions .='<option value="'.($teacher->getId().'" selected>'.$teacher->getFirstName().' '.$teacher->getLastName()).'</option>';
+           }else{
+               $teacherOptions .='<option value="'.($teacher->getId().'">'.$teacher->getFirstName().' '.$teacher->getLastName()).'</option>';
+           }
+        }
+        
+        #populate option with teachers in dropdown menu
+        foreach($subjects as $subject){
+          $found= 0;
+          if(count($class->getSubjects()) > 0){
+               foreach($class->getSubjects() as $sub){
+                    if($sub->getId() == $subject->getId()){
+                        $found = 1;
+                        break;   
+                    } 
+               }
+           }
+           if($found){
+               $subjectOptions .='<option value="'.$subject->getId().'" selected>'.$subject->getName().'</option>';
+           }else{
+               $subjectOptions .='<option value="'.$subject->getId().'">'.$subject->getName().'</option>';
+           }
         }
         
         #get errors if any
@@ -129,10 +164,10 @@ class  ClassroomComponent{
               <div class="card">
                 <div class="card-body">
                   <form id="studentForm" 
-                        action=""
+                        action="../actions/classroom-actions.php"
                         method="post" 
-                        class="form form-horizontal ajax">
-                    <input type="hidden" value="'.(($class->getId()!=null) ?$class->getId(): '').'" >
+                        class="form form-horizontal">
+                    <input type="hidden" name="id" value="'.(($class->getId()!=null) ?$class->getId(): '').'" >
                     <div class="section">                       
                         <div class="section-body">
                             <div class="alert alert-danger  alert-dismissible" role="alert" style="display:none" id="error-alert">
@@ -152,8 +187,6 @@ class  ClassroomComponent{
                                     <input type="text" 
                                        value="'.(($class->getName()!=null)?$class->getName():'').'"
                                        class="form-control"  
-                                       data-validation-length="10-11" 
-                                       data-validation="length" 
                                        name="name" 
                                        placeholder="Class name">
                                </div>                              
@@ -162,11 +195,21 @@ class  ClassroomComponent{
                         </div>
                         
                          <div class="form-group">
-                            <label class="col-md-3 control-label">Form Teacher</label>
+                            <label class="col-md-3 control-label">Grade</label>
+                            <div class="col-md-9">
+                                <div class="col-md-6">
+                                    <select class="select2" name="form">
+                                    '.$formOptions.'
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Select Form Teacher</label>
                             <div class="col-md-9">
                                 <div class="col-md-6">
                                     <select class="select2" name="formTeacher">
-                                    '.$options.'
+                                    '.$formTeacherOptions.'
                                     </select>
                                 </div>
                             </div>
@@ -176,7 +219,7 @@ class  ClassroomComponent{
                             <label class="col-md-3 control-label">Select class teacher(s) </label>
                             <div class="col-md-9">
                                 <div class="col-md-12">
-                                    <select class="select2" name="teachers" multiple>
+                                    <select class="select2" name="teachers[]" multiple>
                                     '.$teacherOptions.'
                                     </select>
                                 </div>
@@ -187,7 +230,7 @@ class  ClassroomComponent{
                             <label class="col-md-3 control-label">Select class subject(s) </label>
                             <div class="col-md-9">
                                 <div class="col-md-12">
-                                    <select class="select2" name="subjects" multiple>
+                                    <select class="select2" name="subjects[]" multiple>
                                     '.$subjectOptions.'
                                     </select>
                                 </div>

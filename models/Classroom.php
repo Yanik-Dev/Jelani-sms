@@ -18,7 +18,7 @@ class Classroom {
     private $_grade;
     private $_teacher;
     private $_subjects;
-    private $__teachers;
+    private $_teachers;
     
     public function __construct($id=0, $name="", $grade=null) {
         $this->_classId = $id;

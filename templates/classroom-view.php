@@ -1,10 +1,10 @@
 <?php 
 $title="Students";
 require './navigation.php';
-require_once dirname(__FILE__).'/../services/ClassService.php';
+require_once dirname(__FILE__).'/../services/ClassroomService.php';
 require_once dirname(__FILE__).'/../components/ClassroomComponent.php';
 
-$classes = ClassService::findAll();
+$classes = ClassroomService::findAll();
 ?>
 
 <div style="padding: 20px;">

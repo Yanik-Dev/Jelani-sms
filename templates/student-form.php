@@ -4,7 +4,7 @@
 include 'navigation.php';
 require_once dirname(__FILE__).'/../services/StudentService.php';
 require_once dirname(__FILE__).'/../services/GuardianService.php';
-require_once dirname(__FILE__).'/../services/ClassService.php';
+require_once dirname(__FILE__).'/../services/ClassroomService.php';
 require_once dirname(__FILE__).'/../models/Classroom.php';
 require_once dirname(__FILE__).'/../models/Student.php';
 require_once dirname(__FILE__).'/../models/Guardian.php';
@@ -14,7 +14,7 @@ $student=new Student();
 $guardian=new Guardian();
 $guardians = [];
 
-$classes = ClassService::findAll();
+$classes = ClassroomService::findAll();
 
 if(isset($_GET['id'])){
     $student = StudentService::findOne($_GET['id']);

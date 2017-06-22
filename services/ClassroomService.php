@@ -3,7 +3,6 @@ require_once dirname(__FILE__).'/../models/Grade.php';
 require_once dirname(__FILE__).'/../models/Subject.php';
 require_once dirname(__FILE__).'/../models/Classroom.php';
 require_once dirname(__FILE__).'/../models/Teacher.php';
-
 require_once dirname(__FILE__).'/../common/Database.php';
 
 /*
@@ -17,7 +16,7 @@ require_once dirname(__FILE__).'/../common/Database.php';
  *
  * @author Yanik
  */
-class ClassService {
+class ClassroomService {
 
     public static function insert($class){
         Database::getInstance()->autocommit(false);
@@ -59,7 +58,7 @@ class ClassService {
                     }
                 }
             }
-           @Database::getInstance()->commit(false);
+           @Database::getInstance()->commit();
            return true;
 
         }
@@ -67,39 +66,36 @@ class ClassService {
     
     public static function update($class){
        Database::getInstance()->autocommit(false);
-        if( $statement = @Database::getInstance()->prepare("UPDATE classes SET name = ?, fk_teacher_id = ?, fk_form_id = ?")){
-            @$statement->bind_param("sii",$class->getName(),$class->getTeacher()->getId(), $class->getGrade()->getId());
+        if( $statement = @Database::getInstance()->prepare("UPDATE classes SET name = ?, fk_teacher_id = ?, fk_form_id = ? WHERE id = ?")){
+            @$statement->bind_param("siii",$class->getName(),$class->getTeacher()->getId(), $class->getGrade()->getId(),$class->getId());
 
             if (!$statement->execute()) {
                 echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
                 Database::getInstance()->rollback();
-                return false;
                 die();
             }
             
-            if( $statement = @Database::getInstance()->prepare("DELETE teacher_classes WHERE fk_class_id = ?")){
+            if( $statement = @Database::getInstance()->prepare("DELETE FROM teacher_classes WHERE fk_class_id = ?")){
                 @$statement->bind_param("i", $class->getId());
 
                 if (!$statement->execute()) {
                     echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
                     Database::getInstance()->rollback();
-                    return false;
                     die();
                 }
             }
             
-            if( $statement = @Database::getInstance()->prepare("DELETE class_subjects WHERE fk_class_id = ?")){
+            if( $statement = @Database::getInstance()->prepare("DELETE FROM class_subjects WHERE fk_class_id = ?")){
                 @$statement->bind_param("i", $class->getId());
 
                 if (!$statement->execute()) {
                     echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
                     Database::getInstance()->rollback();
-                    return false;
                     die();
                 }
             }
             
-            $teacher = $class->getTeachers();
+            $teachers = $class->getTeachers();
             $subjects = $class->getSubjects();
             foreach($teachers as $teacher){
                 if( $statement = @Database::getInstance()->prepare("INSERT INTO teacher_classes SET fk_teacher_id = ?, fk_class_id = ?")){
@@ -126,7 +122,8 @@ class ClassService {
                     }
                 }
             }
-           @Database::getInstance()->commit(false);
+           @Database::getInstance()->commit();
+           return true;
         }
         
     }  
@@ -152,8 +149,8 @@ class ClassService {
                     while($row = $rows->fetch_assoc()){
                         $subject = new Subject();
                         $subject->setId($row["subject_id"]);
-                        $subject->setId($row["subject_code"]);
-                        $subject->setId($row["subject_name"]);
+                        $subject->setCode($row["subject_code"]);
+                        $subject->setName($row["subject_name"]);
                         $subjects[$i] = $subject;
                         $i++;
                     }
@@ -169,7 +166,7 @@ class ClassService {
                 die();
             }
             $i=0;
-            if( $statement = @Database::getInstance()->prepare("SELECT * FROM teacher_classes INNER JOIN teachers"
+            if( $statement = @Database::getInstance()->prepare("SELECT * FROM teacher_classes INNER JOIN users"
                      . " ON  users.id = teacher_classes.fk_teacher_id   WHERE fk_class_id = ?")){
                 @$statement->bind_param("i", $id);
                 $statement->execute();
@@ -204,27 +201,25 @@ class ClassService {
         $teachers = [];
         $subjects = [];
         $i = 0;
-        
-        Database::getInstance()->autocommit(false);
+        $index = 0;
         if( $statement = @Database::getInstance()->prepare("SELECT * FROM v_classes")){
             $statement->execute();
             if($rows = $statement->get_result()){
                 while($row = $rows->fetch_assoc()){
-                    $class = new Classroom();
                     $class = self::mapObjectFromArray($row);
                  
                     $subjects = [];
-                    $i=0;
                      if( $statement = @Database::getInstance()->prepare("SELECT * FROM class_subjects INNER JOIN subjects"
                              . " ON subjects.subject_id = class_subjects.fk_subject_id   WHERE fk_class_id = ?")){
                         @$statement->bind_param("i", $class->getId());
                         $statement->execute();
+                        $i=0;
                         if($rows = $statement->get_result()){
                             while($row = $rows->fetch_assoc()){
-                                $subject = new Subject();
+                                $subject = new Subject(); 
                                 $subject->setId($row["subject_id"]);
-                                $subject->setId($row["subject_code"]);
-                                $subject->setId($row["subject_name"]);
+                                $subject->setCode($row["subject_code"]);
+                                $subject->setName($row["subject_name"]);
                                 $subjects[$i] = $subject;
                                 $i++;
                             }
@@ -256,21 +251,20 @@ class ClassService {
                             $class->setTeachers($teachers);
                     }else{
                         echo "Execute failed: (" . Database::getInstance()->errno . ") " . Database::getInstance()->error;
-                        Database::getInstance()->rollback();
+                        
                         die();
                     }
                     }else{
                         echo "Execute failed: (" . Database::getInstance()->errno . ") " . Database::getInstance()->error;
-                        Database::getInstance()->rollback();
                         die();
                     }
-                    $classes[$i] = $class;
-                    $i++;
+                    $classes[$index] = $class;
+                    $index++;
                 }
+                echo $index;
+                die();
             }
-            Database::getInstance()->commit();
         }
-
         return  $classes;
     }
 
@@ -391,18 +385,21 @@ class ClassService {
             $i++;
         }
         $i=0;
-        foreach($subjects as $sub){
+        foreach($subjectArr as $sub){
             $s = new Subject();
             $s->setId($sub);
             $subjects[$i] = $s;
             $i++;
         }
         $teacher->setId($postVar['formTeacher']);
-        $grade->setId($postVar['grade']);
+        $grade->setId($postVar['form']);
         
-        $classroom->setName($postVar['class']);
-        $classroom->setId($postVar['id']);
-        $classroom->setGrade($postVar['grade']);
+        $classroom->setName($postVar['name']);
+        if(isset($postVar['id'])){
+         $classroom->setId($postVar['id']);
+        }
+        $classroom->setGrade($grade);
+        $classroom->setTeacher($teacher);
         $classroom->setTeachers($teachers);
         $classroom->setSubjects($subjects);
         
