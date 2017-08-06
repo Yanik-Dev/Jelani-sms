@@ -2862,8 +2862,10 @@ aside.app-sidebar {
         display: block; }
     aside.app-sidebar .sidebar-menu {
       position: relative;
-      overflow: auto; }
+      overflow: auto;
+     }
       aside.app-sidebar .sidebar-menu ul.sidebar-nav {
+        
         padding: 0; }
         aside.app-sidebar .sidebar-menu ul.sidebar-nav > li > a {
           display: -ms-flexbox;

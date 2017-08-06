@@ -24,6 +24,7 @@
           <div class="title">Students</div>
         </a>
       </li>  
+      <?php if(SessionService::getSessionObj("user")->getRole() == 'Admin'): ?>
       <li class="<?=($title=='Teachers')?'active':''?>">
           <a href="./teacher-view.php">
           <div class="icon">
@@ -48,7 +49,16 @@
           </div>
           <div class="title">Classes</div>
         </a>
-      </li>   
+      </li> 
+      <li class="<?=($title=='Users')?'active':''?>">
+          <a href="./classroom-view.php">
+          <div class="icon">
+            <i class="fa fa-users" aria-hidden="true"></i>
+          </div>
+          <div class="title">Users</div>
+        </a>
+      </li> 
+    <?php endif; ?>  
     </ul>
   </div>
   <div class="sidebar-footer">

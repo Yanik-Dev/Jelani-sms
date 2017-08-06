@@ -31,6 +31,8 @@ if($user->getUsername() != null){
         $sessionUser->setUsername($user->getUsername());
         $sessionUser->setLastName($user->getLastName());
         $sessionUser->setGender($user->getGender());
+        $sessionUser->setIsActivated($user->getIsActivated());
+        $sessionUser->setRole($user->getRole());
         SessionService::setSessionObj("user", $sessionUser);
         header("Location: ../templates/home.php");
         exit;
