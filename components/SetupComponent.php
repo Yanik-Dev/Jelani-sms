@@ -1,10 +1,5 @@
 <?php
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 class  SetupComponent{
     
@@ -43,7 +38,7 @@ class  SetupComponent{
           <div class="form-suggestion">
             Configure Database settings
           </div>
-          <form action="../actions/setup-db-action.php" method="POST">
+          <form action="../actions/setup-db-action.php?account=true" method="POST">
               <div class="input-group">
                 <span class="input-group-addon" id="basic-addon1">
                   <i class="fa fa-building" aria-hidden="true"></i></span>

@@ -89,7 +89,7 @@ if(isset($_GET['account'])){
             
             #insert admin user
             $salt = Security::getSalt();
-            $hash = Security::getHash($password, $salt);
+            $hash = Security::getHash($_POST["password"], $salt);
             if( $statement = @Database::getInstance()->prepare("INSERT  INTO users SET username= ?, password = ?, "
                     . " salt= ?, role= 'ADMIN', is_activated = 'yes'")){
                 @$statement->bind_param("sss", $_POST['username'], $hash, $salt);

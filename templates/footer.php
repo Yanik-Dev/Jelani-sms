@@ -4,7 +4,6 @@
     </div>
 
   <script type="text/javascript" src="../assets/vendor/js/vendor.js"></script>
-  <script type="text/javascript" src="../assets/vendor/js/app.js"></script>    
   <script type="text/javascript" src="../assets/js/moment.js"></script>  
 
   <script type="text/javascript" src="../assets/vendor/datepicker/js/bootstrap-datetimepicker.min.js"></script>

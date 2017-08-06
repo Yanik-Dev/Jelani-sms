@@ -14,17 +14,18 @@ class  ClassroomComponent{
         $teachers = [];
         
         $i=0;
-        $string = "";
         foreach($classes as $class){
+            $string = "";
             foreach($class->getTeachers() as $teacher){
                 $string .= $teacher->getFirstName().' '.$teacher->getLastName().'<br />';
+               
             }
             $teachers[$i] = $string;
             $i++;
         }
         $i=0;
-        $string = "";
         foreach($classes as $class){
+        $string = "";
             foreach($class->getSubjects() as $subject){
                 $string .= $subject->getName().'<br />';
             }
@@ -38,7 +39,7 @@ class  ClassroomComponent{
             <tr>
                 <td>'.$class->getName().'</td>
                 <td>'.$class->getGrade()->getName().'</td>
-                <td>'.$teacher->getFirstName().' '.$teacher->getLastName().'</td>
+                <td>'.$class->getTeacher()->getFirstName().' '.$class->getTeacher()->getLastName().'</td>
                 <td>'.$teachers[$i].'</td>
                 <td>'.$subjects[$i].'</td>
                 <td>

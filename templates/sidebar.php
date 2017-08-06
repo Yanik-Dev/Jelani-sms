@@ -8,15 +8,15 @@
   </div>
   <div class="sidebar-menu">
     <ul class="sidebar-nav">
-      <li class="active">
-        <a href="./index.html">
+      <li class="<?=($title=='Home')?'active':''?>" >
+        <a href="./home.php">
           <div class="icon">
             <i class="fa fa-tasks" aria-hidden="true"></i>
           </div>
-          <div class="title">Dashboard</div>
+          <div class="title">Home</div>
         </a>
       </li>  
-      <li>
+      <li class="<?=($title=='Students' || $title=='Edit Student' || $title=='New Student')?'active':''?>">
         <a href="./student-view.php">
           <div class="icon">
             <i class="fa fa-child" aria-hidden="true"></i>
@@ -24,7 +24,7 @@
           <div class="title">Students</div>
         </a>
       </li>  
-      <li class="">
+      <li class="<?=($title=='Teachers')?'active':''?>">
           <a href="./teacher-view.php">
           <div class="icon">
             <i class="fa fa-female" aria-hidden="true"></i>
@@ -32,7 +32,7 @@
           <div class="title">Teachers</div>
         </a>
       </li>  
-      <li class="">
+      <li class="<?=($title=='Subjects')?'active':''?>">
           <a href="./subject-view.php">
           <div class="icon">
             <i class="fa fa-book" aria-hidden="true"></i>
@@ -41,7 +41,7 @@
         </a>
       </li>   
        
-      <li class="">
+      <li class="<?=($title=='Classes')?'active':''?>">
           <a href="./classroom-view.php">
           <div class="icon">
             <i class="fa fa-female" aria-hidden="true"></i>

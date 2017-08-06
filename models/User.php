@@ -29,6 +29,7 @@ class User {
     private $_contactNo1;
     private $_contactNo2;
     
+    
     public function getId(){ return $this->_id; }
     public function setId($id) { $this->_id = $id; }
     
@@ -76,4 +77,6 @@ class User {
     
     public function getContactNo2(){ return $this->_contactNo2; }
     public function setContactNo2($contactNo2) { $this->_contactNo2 = $contactNo2; }
+
+    public function getFullName() { return $this->_firstName.' '.$this->_lastName; }
 }

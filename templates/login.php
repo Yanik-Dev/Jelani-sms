@@ -1,5 +1,13 @@
 <?php 
+  session_start();
+  require './../services/SessionService.php';
+
+  $session = SessionService::getSessionObj('user');
+  if(isset($session)){
+    header('Location: ./home.php');
+  }
   $title = "Login";
+
   include 'header.php'; 
   include '../config/Setup.php';
 ?>

@@ -205,17 +205,17 @@ class ClassroomService {
         if( $statement = @Database::getInstance()->prepare("SELECT * FROM v_classes")){
             $statement->execute();
             if($rows = $statement->get_result()){
+                
                 while($row = $rows->fetch_assoc()){
                     $class = self::mapObjectFromArray($row);
                  
-                    $subjects = [];
                      if( $statement = @Database::getInstance()->prepare("SELECT * FROM class_subjects INNER JOIN subjects"
                              . " ON subjects.subject_id = class_subjects.fk_subject_id   WHERE fk_class_id = ?")){
                         @$statement->bind_param("i", $class->getId());
                         $statement->execute();
                         $i=0;
-                        if($rows = $statement->get_result()){
-                            while($row = $rows->fetch_assoc()){
+                        if($subRows = $statement->get_result()){
+                            while($row = $subRows->fetch_assoc()){
                                 $subject = new Subject(); 
                                 $subject->setId($row["subject_id"]);
                                 $subject->setCode($row["subject_code"]);
@@ -239,8 +239,8 @@ class ClassroomService {
                              . " ON  users.id = teacher_classes.fk_teacher_id   WHERE fk_class_id = ?")){
                         @$statement->bind_param("i", $class->getId());
                         $statement->execute();
-                        if($rows = $statement->get_result()){
-                            while($row = $rows->fetch_assoc()){
+                        if($teachRows = $statement->get_result()){
+                            while($row = $teachRows->fetch_assoc()){
                                 $teacher = new Teacher();
                                 $teacher->setId($row["fk_teacher_id"]);
                                 $teacher->setFirstName($row["first_name"]);
@@ -261,10 +261,9 @@ class ClassroomService {
                     $classes[$index] = $class;
                     $index++;
                 }
-                echo $index;
-                die();
             }
         }
+        
         return  $classes;
     }
 
@@ -303,8 +302,8 @@ class ClassroomService {
                              . " ON subjects.subject_id = class_subjects.fk_subject_id   WHERE fk_class_id = ?")){
                         @$statement->bind_param("i", $class->getId());
                         $statement->execute();
-                        if($rows = $statement->get_result()){
-                            while($row = $rows->fetch_assoc()){
+                        if($subRows = $statement->get_result()){
+                            while($row = $subRows->fetch_assoc()){
                                 $subject = new Subject();
                                 $subject->setId($row["subject_id"]);
                                 $subject->setId($row["subject_code"]);
@@ -328,8 +327,8 @@ class ClassroomService {
                              . " ON  users.id = teacher_classes.fk_teacher_id   WHERE fk_class_id = ?")){
                         @$statement->bind_param("i", $class->getId());
                         $statement->execute();
-                        if($rows = $statement->get_result()){
-                            while($row = $rows->fetch_assoc()){
+                        if($teachRows = $statement->get_result()){
+                            while($row = $teachRows->fetch_assoc()){
                                 $teacher = new Teacher();
                                 $teacher->setId($row["fk_teacher_id"]);
                                 $teacher->setFirstName($row["first_name"]);
@@ -369,6 +368,7 @@ class ClassroomService {
    
     
     public static function getFromPost($postVar){
+      
         $classroom = new Classroom();
         $grade = new Grade();
         $teacher = new Teacher();
@@ -411,8 +411,8 @@ class ClassroomService {
         $classroom = new Classroom($row['id'], $row['name'], $grade);
         $teacher = new Teacher();
         $teacher->setId($row["fk_teacher_id"]);
-        /*$teacher->setFirstName($row["first_name"]);
-        $teacher->setLastName($row["last_name"]);*/
+        $teacher->setFirstName($row["first_name"]);
+        $teacher->setLastName($row["last_name"]);
         $classroom->setTeacher($teacher);
         
         return $classroom;

@@ -25,7 +25,13 @@ class AuthService
 
                 if($rows = $statement->get_result()){
                     while($row = $rows->fetch_assoc()){
-                       var_dump($row);
+                       $user->setFirstName($row["first_name"]);
+                       $user->setUsername($row["username"]);
+                       $user->setLastName($row["last_name"]);
+                       $user->setId($row["id"]);
+                       $user->setPassword($row["password"]);
+                       $user->setSalt($row["salt"]);
+                       $user->setGender($row["gender"]);
                     }
                 }
         }

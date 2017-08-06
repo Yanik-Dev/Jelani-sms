@@ -107,8 +107,8 @@ class SubjectService {
                          . " ON  users.id = teacher_subjects.fk_teacher_id   WHERE fk_subject_id = ?")){
                     @$statement->bind_param("i", $id);
                     $statement->execute();
-                    if($rows = $statement->get_result()){
-                        while($row = $rows->fetch_assoc()){
+                    if($teachRows = $statement->get_result()){
+                        while($row = $teachRows->fetch_assoc()){
                             $teacher = new Teacher();
                             $teacher->setId($row["fk_teacher_id"]);
                             $teacher->setFirstName($row["first_name"]);
@@ -146,8 +146,8 @@ class SubjectService {
                              . " ON  users.id = teacher_subjects.fk_teacher_id   WHERE fk_subject_id = ?")){
                         @$statement->bind_param("i", $subject->getId());
                         $statement->execute();
-                        if($rows = $statement->get_result()){
-                            while($row = $rows->fetch_assoc()){
+                        if($teachRows = $statement->get_result()){
+                            while($row = $teachRows->fetch_assoc()){
                                 $teacher = new Teacher();
                                 $teacher->setId($row["fk_teacher_id"]);
                                 $teacher->setFirstName($row["first_name"]);
@@ -155,6 +155,7 @@ class SubjectService {
                                 $teachers[$i] = $teacher;
                                 $i++;
                             }
+                            $i=0;
                             $subject->setTeachers($teachers);
                         }else{
                             echo "Execute failed: (" . Database::getInstance()->errno . ") " . Database::getInstance()->error;
@@ -163,7 +164,6 @@ class SubjectService {
                     }
                     $subjects[$i] = $subject;
                     $i++;
-                    $i=0;
                 }
             }
         }
