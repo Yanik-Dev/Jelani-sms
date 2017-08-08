@@ -13,45 +13,44 @@ $classrooms = ClassroomService::findAll();
 $teachers = TeacherService::findAll();
 $subjects = SubjectService::findAll();
 
-
+$recentlyAddedStudents = StudentService::findLimit(5);
+$recentlyAddedTeachers = TeacherService::findLimit(5);
 ?>
 <div style="padding: 20px;">
   <div class="alert <?=(count($subjects) < 1 || count($classrooms) > 1 || count($teachers) > 1 )? 'alert-danger' :'alert-success'?> alert-dismissible fade in" role="alert">
         <h4 id="oh-snap!-you-got-an-error!">Welcome <?= ucfirst(SessionService::getSessionObj("user")->getUsername()) ?></h4>
         <?php if(count($students) < 1 || count($classrooms) > 1 || count($teachers) > 1 || count($subjects)> 1): ?>
             <p>Seems like you have some configurations to do</p>
+            <br />
             <div class="row">
             <div class="col-sm-6">
                 <div class="list-group">
                 <?php if(count($teachers) < 1): ?>
-                 <a href="#" class="list-group-item">
-                    <span class="badge">14</span> Add Teachers
+                 <a href="./teacher-form.php" class="list-group-item">
+                    <span class="badge"><i class="icon fa fa-angle-right "></i></span> Add Teachers
                 </a>
-                <?php endif; ?>
-                <?php if(count($subjects) < 1): ?>
-                   <a href="#" class="list-group-item">
-                    <span class="badge">14</span> Add Subjects
+                <?php elseif(count($subjects) < 1): ?>
+                   <a href="./subject-form.php" class="list-group-item">
+                    <span class="badge"><i class="icon fa fa-angle-right "></i></span> Add Subjects
                    </a>
-                <?php endif; ?>
-                <?php if(count($classrooms) < 1): ?>
-                   <a href="#" class="list-group-item">
-                    <span class="badge">14</span> Add Classrooms
+                <?php elseif(count($classrooms) < 1): ?>
+                   <a href="./classroom-form.php" class="list-group-item">
+                    <span class="badge"><i class="icon fa fa-angle-right "></i></span> Add Classrooms
                     </a>
-                <?php endif; ?>
-                <?php if(count($students) < 1): ?>
-                   <a href="#" class="list-group-item">
-                    <span class="badge">14</span>Add Students
+                <?php elseif(count($students) < 1): ?>
+                   <a href="./student-form.php" class="list-group-item">
+                    <span class="badge"><i class="icon fa fa-angle-right "></i></span>Add Students
                    </a>
                 <?php endif; ?>
                </div>
             </div>
         <?php endif; ?>             
         
-   </div>
+      </div>
    </div>
    <div class="row">
          <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                <a class="card card-banner card-blue-light">
+                <a class="card card-banner card-blue-light" href="student-view.php">
                 <div class="card-body">
                     <i class="icon fa fa-child fa-4x"></i>
                     <div class="content">
@@ -62,7 +61,7 @@ $subjects = SubjectService::findAll();
                 </a>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                <a class="card card-banner card-blue-light">
+                <a class="card card-banner card-blue-light" href="./teacher-view.php">
                 <div class="card-body">
                     <i class="icon fa fa-female fa-4x"></i>
                     <div class="content">
@@ -74,7 +73,7 @@ $subjects = SubjectService::findAll();
             </div>
 
             <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                <a class="card card-banner card-green-light">
+                <a class="card card-banner card-green-light" href="./classroom.php">
                 <div class="card-body">
                     <i class="icon fa fa-user-plus fa-4x"></i>
                     <div class="content">
@@ -85,7 +84,7 @@ $subjects = SubjectService::findAll();
                 </a>
            </div>
             <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-                <a class="card card-banner card-green-light">
+                <a class="card card-banner card-green-light" href="./subject-view.php">
                 <div class="card-body">
                     <i class="icon fa fa-book fa-4x"></i>
                     <div class="content">
@@ -98,14 +97,14 @@ $subjects = SubjectService::findAll();
     </div>
 </div>
 
-    <div class="row">
+<div class="row">
     <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         <div class="card card-mini">
             <div class="card-header">
                 <div class="card-title">Recently Added Students</div>
                 <ul class="card-action">
                 <li>
-                    <a href="/">
+                    <a href="./home.php">
                     <i class="fa fa-refresh"></i>
                     </a>
                 </li>
@@ -116,14 +115,16 @@ $subjects = SubjectService::findAll();
                 <thead>
                     <tr>
                     <th>Student</th>
-                    <th>Grade</th>
+                    <th>Classroom</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                    <td>MicroSD 64Gb</td>
-                    <td class="right">12</td>
-                    </tr>
+                    <?php foreach($recentlyAddedStudents as $students): ?>
+                        <tr>
+                            <td><?= $students->getFirstName().' '.$students->getLastName() ?></td>
+                            <td><?= $students->getClass()->getName() ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
                 </table>
             </div>
@@ -136,7 +137,7 @@ $subjects = SubjectService::findAll();
                     <div class="card-title">Recently Added Teachers</div>
                     <ul class="card-action">
                     <li>
-                        <a href="/">
+                        <a href="./home.php">
                         <i class="fa fa-refresh"></i>
                         </a>
                     </li>
@@ -146,15 +147,15 @@ $subjects = SubjectService::findAll();
                     <table class="table card-table">
                     <thead>
                         <tr>
-                        <th>Student</th>
-                        <th>Grade</th>
+                          <th>Teacher</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                        <td>MicroSD 64Gb</td>
-                        <td class="right">12</td>
-                        </tr>
+                         <?php foreach($recentlyAddedTeachers as $teacher): ?>
+                            <tr>
+                                <td><?= $teacher->getFirstName().' '.$teacher->getLastName() ?></td>
+                            </tr>
+                        <?php endforeach; ?>
                     </tbody>
                     </table>
                 </div>

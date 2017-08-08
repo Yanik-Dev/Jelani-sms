@@ -20,8 +20,8 @@ if(isset($_GET['id']) && isset($_GET['action'])){
         $response->status = "Ok";
         $response->message = "Student deleted successfully";
         echo json_encode($response);
-        if(isset($_GET['ajax'])){
-          header('Location: ../templates/login.php');
+        if(!isset($_GET['ajax'])){
+          header('Location: ../templates/student-view.php?code='.$response->code);
         }
         exit;
     };
@@ -47,8 +47,8 @@ if(isset($_POST['id'])){
             $response->status = "Ok";
             $response->message = "Student updated successfully";
             echo json_encode($response);
-            if(isset($_GET['ajax'])){
-              header('Location: ../templates/login.php');
+            if(!isset($_GET['ajax'])){
+             header('Location: ../templates/student-form.php?code='.$response->code);
             }
             exit;
         }else{
@@ -57,6 +57,7 @@ if(isset($_POST['id'])){
             $response->message = "a server error has occured";
             $uploadService->removeFiles();
             echo json_encode($response);
+            header('Location: ../templates/student-form.php?code='.$response->code);
             exit;
         }  
     }
@@ -68,8 +69,8 @@ if(StudentService::exist($student)){
     $response->status = "Failed";
     $response->message = "Duplicate entry";
     echo json_encode($response);
-    if(isset($_GET['ajax'])){
-      header('Location: ../templates/login.php');
+    if(!isset($_GET['ajax'])){
+      header('Location: ../templates/student-form.php?code='.$response->code);
     }
     exit;
 }
@@ -80,8 +81,8 @@ if(StudentService::insert($student)){
     $response->status = "Ok";
     $response->message = "Student inserted successfully";
     echo json_encode($response);
-    if(isset($_GET['ajax'])){
-      header('Location: ../templates/login.php');
+    if(!isset($_GET['ajax'])){
+        header('Location: ../templates/student-form.php?code='.$response->code);
     }
     exit;
  }else{
@@ -90,4 +91,6 @@ if(StudentService::insert($student)){
     $response->message = "a server error has occured";
     $uploadService->removeFiles();
     echo json_encode($response);
+    header('Location: ../templates/student-form.php?code='.$response->code);
+    exit;
  }

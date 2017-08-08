@@ -33,25 +33,24 @@
           <div class="title">Teachers</div>
         </a>
       </li>  
-      <li class="<?=($title=='Subjects')?'active':''?>">
+      <li class="<?=($title=='Subjects' || $title=='Edit Subject' || $title=='New Subject')?'active':''?>">
           <a href="./subject-view.php">
           <div class="icon">
             <i class="fa fa-book" aria-hidden="true"></i>
           </div>
           <div class="title">Subjects</div>
         </a>
-      </li>   
-       
-      <li class="<?=($title=='Classes')?'active':''?>">
+      </li>     
+      <li class="<?=($title=='Classrooms'|| $title=='Edit Classroom' || $title=='New Classroom')?'active':''?>">
           <a href="./classroom-view.php">
           <div class="icon">
-            <i class="fa fa-female" aria-hidden="true"></i>
+            <i class="fa fa-home" aria-hidden="true"></i>
           </div>
           <div class="title">Classes</div>
         </a>
       </li> 
       <li class="<?=($title=='Users')?'active':''?>">
-          <a href="./classroom-view.php">
+          <a href="./user-view.php">
           <div class="icon">
             <i class="fa fa-users" aria-hidden="true"></i>
           </div>
@@ -71,14 +70,5 @@
     </ul>
   </div>
 </aside>
-
-<script type="text/ng-template" id="sidebar-dropdown.tpl.html">
-  <div class="dropdown-background">
-    <div class="bg"></div>
-  </div>
-  <div class="dropdown-container">
-    {{list}}
-  </div>
-</script>
 
 <div class="app-container">

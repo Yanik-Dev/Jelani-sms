@@ -1,22 +1,22 @@
 <?php 
-$title="Students";
+$title="Users";
 require './navigation.php';
-require_once dirname(__FILE__).'/../services/StudentService.php';
+require_once dirname(__FILE__).'/../services/UserService.php';
 require_once dirname(__FILE__).'/../services/SessionService.php';
-require_once dirname(__FILE__).'/../components/StudentComponent.php';
+require_once dirname(__FILE__).'/../components/UserComponent.php';
 
 $session = SessionService::getSessionObj("user");
-if($session->getRole() == 'Admin'){
-  $students = StudentService::findAll();
+
+if($session->getRole() != 'Admin'){
+  header('Location: ./home.php');
 }
-else if($session->getRole() == 'Teacher'){
-  
-}
+ $students = UserService::findAll();
 
 $success = false;
+$isValid = true;
 if(isset($_GET["code"])){
   if($_GET["code"] == 200){ $success = true; }
-  
+  if($_GET["code"] == 41){ $isValid = false; }
 }
 ?>
 
@@ -28,9 +28,15 @@ if(isset($_GET["code"])){
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span></button>
                 Deleted Successfully
             </div>
-          <?php endif; ?>
+           <?php endif; ?>
+           <?php if(!$isValid): ?>
+            <div class="alert alert-danger  alert-dismissible"  role="alert" >
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span></button>
+                Cannot delete your only admin
+            </div>
+           <?php endif; ?>
             <div class="row"> 
-              <?= StudentComponent::studentDatagrid($students, 'Students')?>
+              <?=UserComponent::userDatagrid($students, 'Users')?>
             </div>
        </div>
     </div>

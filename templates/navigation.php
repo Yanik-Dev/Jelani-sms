@@ -1,4 +1,4 @@
-<?=
+<?php
 session_start();
 require './../services/SessionService.php';
 require './../services/AuthService.php';

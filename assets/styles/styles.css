@@ -6,3 +6,6 @@
     z-index: 999999;
 }
 
+.app-sidebar{
+    height: auto !important;
+}

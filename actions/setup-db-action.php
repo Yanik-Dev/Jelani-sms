@@ -100,9 +100,25 @@ if(isset($_GET['account'])){
                     die();
                 }
 
-                Database::getInstance()->commit();
-                header("Location: ../templates/login.php");
-                exit;
+                $year = date('Y');
+                if( $statement = @Database::getInstance()->prepare("INSERT  INTO academic_years SET year= ?, is_default = 1")){
+                @$statement->bind_param("i",$year);
+
+                    if (!$statement->execute()) {
+                        echo "Execute failed: (" . $statement->errno . ") " . $statement->error;
+                        Database::getInstance()->rollback();
+                        die();
+                    }
+
+                    Database::getInstance()->commit();
+                    header("Location: ../templates/login.php");
+                    exit;
+
+                }
+                    echo "Execute failed: (" . Database::getInstance()->errno . ") " . Database::getInstance()->error;
+                    Database::getInstance()->rollback();
+                    die();
+                
 
             }else{
                 echo "Execute failed: (" . Database::getInstance()->errno . ") " . Database::getInstance()->error;

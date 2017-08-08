@@ -63,7 +63,6 @@ class GuardianService {
 
             }else{
             echo "Execute failed: (" . Database::getInstance()->errno . ") " . Database::getInstance()->error;
-            var_dump(Database::getInstance());
                 Database::getInstance()->rollback();
 
                 die();

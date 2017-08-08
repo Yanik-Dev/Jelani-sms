@@ -4,6 +4,7 @@ require 'header.php';
 require '../components/SetupComponent.php';
 require '../services/GradeService.php';
 
+
 if(isset($_GET['db']) || isset($_GET['account'])){
     
 }else{
@@ -58,6 +59,7 @@ $availableForms = GradeService::findAllAvailableForms();
         <div class="app-form">
               <div class="step">
                 <ul class="nav nav-tabs nav-justified" role="tablist">
+                <?php  if(isset($_GET['db'])): ?>
                     <li role="step" class="active">
                         <a href="#db" id="dbStep" role="tab" data-toggle="tab" aria-controls="home" aria-expanded="true">
                             <div class="icon fa fa-database"></div>
@@ -67,6 +69,7 @@ $availableForms = GradeService::findAllAvailableForms();
                             </div>
                         </a>
                     </li>
+                  <?php endif; ?>
                     <li role="step">
                         <a href="#account" role="tab"  id="accountStep" data-toggle="tab" aria-controls="profile">
                             <div class="icon fa fa-user"></div>
@@ -79,9 +82,11 @@ $availableForms = GradeService::findAllAvailableForms();
                 </ul>
                  <!-- Tab panes -->
                 <div class="tab-content">
+                  <?php  if(isset($_GET['db'])): ?>
                     <div role="tabpanel" class="tab-pane active" id="db">
                         <?= SetupComponent::dbSetup() ?> 
                     </div>
+                  <?php endif; ?>
                     <div role="tabpanel" class="tab-pane" id="account">
                        <?= SetupComponent::accountSetup($availableForms) ?> 
                     </div>
@@ -98,6 +103,15 @@ $availableForms = GradeService::findAllAvailableForms();
 
 <?php include 'footer.php'; ?>
 
+<script>
+  $().ready(function(){
+      $.validate({
+          validateOnBlur : true,
+          modules : 'security',
+      });
+  });
+   
+</script>
 <?php
     if(isset($_GET['db'])){
         echo ' <script>

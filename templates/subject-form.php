@@ -12,6 +12,21 @@ $subject = new Subject();
 $teachers = TeacherService::findAll();
 if(isset($_GET['id'])){
     $subject = SubjectService::findOne($_GET['id']);
+
+}
+
+$errors = [];
+$success = false;
+if(isset($_GET["code"])){
+    if($_GET["code"] == 403){
+        $errors[0] = "Server error. Please contact admin";
+    }
+    if($_GET["code"] == 409){
+        $errors[0] ="Subject already exist";
+    }
+    if($_GET["code"] == 200){
+        $success = true;
+    }
 }
 ?>
 
@@ -19,7 +34,7 @@ if(isset($_GET['id'])){
 <div style="padding: 20px;">
     <a href="./subject-view.php" class="btn btn-default btn-xs">Back to View</a>
     <div class="row"> 
-      <?= SubjectComponent::form($subject, $teachers); ?>
+      <?= SubjectComponent::form($subject, $teachers, $errors, $success); ?>
     </div> 
 </div>
 

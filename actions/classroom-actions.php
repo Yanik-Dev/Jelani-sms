@@ -14,8 +14,8 @@ if(isset($_GET['id']) && isset($_GET['action'])){
         $response->status = "Ok";
         $response->message = "Classroom deleted successfully";
         echo json_encode($response);
-        if(isset($_GET['ajax'])){
-          header('Location: ../templates/login.php');
+        if(!isset($_GET['ajax'])){
+          header('Location: ../templates/classroom-view.php?code='.$response->code);
         }
         exit;
     };
@@ -33,8 +33,8 @@ if(isset($_POST['id'])){
             $response->status = "Ok";
             $response->message = "Classroom updated successfully";
             echo json_encode($response);
-            if(isset($_GET['ajax'])){
-              header('Location: ../templates/login.php');
+            if(!isset($_GET['ajax'])){
+              header('Location: ../templates/classroom-form.php?code='.$response->code);
             }
             exit;
         }else{
@@ -42,6 +42,7 @@ if(isset($_POST['id'])){
             $response->status = "error";
             $response->message = "a server error has occured";
             echo json_encode($response);
+            header('Location: ../templates/classroom-form.php?code='.$response->code);
             exit;
         } 
     }
@@ -53,8 +54,8 @@ if(ClassroomService::exist($classroom)){
     $response->status = "Failed";
     $response->message = "Duplicate entry";
     echo json_encode($response);
-    if(isset($_GET['ajax'])){
-      header('Location: ../templates/login.php');
+    if(!isset($_GET['ajax'])){
+      header('Location: ../templates/classroom-form.php?code='.$response->code);
     }
     exit;
 }
@@ -66,7 +67,7 @@ if(ClassroomService::insert($classroom)){
     $response->message = "Classroom inserted successfully";
     echo json_encode($response);
     if(isset($_GET['ajax'])){
-      header('Location: ../templates/login.php');
+      header('Location: ../templates/classroom-form.php?code='.$response->code);
     }
     exit;
  }else{
@@ -74,4 +75,6 @@ if(ClassroomService::insert($classroom)){
     $response->status = "error";
     $response->message = "a server error has occured";
     echo json_encode($response);
+    header('Location: ../templates/classroom-form.php?code='.$response->code);
+    exit;
  }

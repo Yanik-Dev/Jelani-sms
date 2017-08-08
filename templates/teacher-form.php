@@ -13,6 +13,19 @@ if(isset($_GET['id'])){
     $teacher = TeacherService::findOne($_GET['id']);
 }
 
+$errors = [];
+$success = false;
+if(isset($_GET["code"])){
+    if($_GET["code"] == 403){
+        $errors[0] = "Server error. Please contact admin";
+    }
+    if($_GET["code"] == 409){
+        $errors[0] ="Teacher already exist";
+    }
+    if($_GET["code"] == 200){
+        $success = true;
+    }
+}
 ?>
 
 
@@ -29,7 +42,7 @@ if(isset($_GET['id'])){
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="info">
            <div class="row"> 
-             <?= TeacherComponent::teacherForm($teacher); ?>
+             <?= TeacherComponent::teacherForm($teacher, $errors, $success); ?>
            </div>        
         </div>
     </div>

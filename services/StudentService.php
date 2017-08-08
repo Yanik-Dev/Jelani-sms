@@ -170,6 +170,22 @@ class StudentService {
         return $students;
     }
 
+    public static function findLimit($limit){
+        $students = [];
+        $i = 0;
+        if( $statement = @Database::getInstance()->prepare("SELECT * FROM v_students order by id desc limit 0,$limit")){
+            $statement->execute();
+            if($rows = $statement->get_result()){
+                while($row = $rows->fetch_assoc()){
+                    $student = self::mapObjectFromArray($row);
+                    $students[$i] = $student;
+                    $i++;
+                }
+            }
+        }
+        return $students;
+    }
+
     public static function exist($student){
         if( $statement = @Database::getInstance()->prepare("SELECT * FROM v_students WHERE srn = ? ")){
             @$statement->bind_param("s", $student->getSRN());

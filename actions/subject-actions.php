@@ -15,7 +15,7 @@ if(isset($_GET['id']) && isset($_GET['action'])){
         $response->message = "Subject deleted successfully";
         echo json_encode($response);
         if(isset($_GET['ajax'])){
-          header('Location: ../templates/login.php');
+          header('Location: ../templates/subject-view.php?code='.$response->code);
         }
         exit;
     };
@@ -33,8 +33,8 @@ if(isset($_POST['id'])){
             $response->status = "Ok";
             $response->message = "Subject updated successfully";
             echo json_encode($response);
-            if(isset($_GET['ajax'])){
-              header('Location: ../templates/login.php');
+            if(!isset($_GET['ajax'])){
+               header('Location: ../templates/subject-view.php?code='.$response->code);
             }
             exit;
         }else{
@@ -53,8 +53,8 @@ if(SubjectService::exist($subject)){
     $response->status = "Failed";
     $response->message = "Duplicate entry";
     echo json_encode($response);
-    if(isset($_GET['ajax'])){
-      header('Location: ../templates/login.php');
+    if(!isset($_GET['ajax'])){
+       header('Location: ../templates/subject-view.php?code='.$response->code);
     }
     exit;
 }
@@ -65,8 +65,8 @@ if(SubjectService::insert($subject)){
     $response->status = "Ok";
     $response->message = "Subject inserted successfully";
     echo json_encode($response);
-    if(isset($_GET['ajax'])){
-      header('Location: ../templates/login.php');
+    if(!isset($_GET['ajax'])){
+        header('Location: ../templates/subject-view.php?code='.$response->code);
     }
     exit;
  }else{
@@ -74,4 +74,6 @@ if(SubjectService::insert($subject)){
     $response->status = "error";
     $response->message = "a server error has occured";
     echo json_encode($response);
+    header('Location: ../templates/subject-view.php?code='.$response->code);
+    exit;
  }

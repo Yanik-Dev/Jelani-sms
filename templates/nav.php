@@ -31,11 +31,11 @@
               <h4 class="username"><?= ucfirst(SessionService::getSessionObj("user")->getUsername())?></h4>
             </div>
             <ul class="action">
-              <li>
+              <!--<li>
                 <a href="#">
                   Setting
                 </a>
-              </li>
+              </li>-->
               <li>
                 <a href="./home.php?logout=true">
                   Logout

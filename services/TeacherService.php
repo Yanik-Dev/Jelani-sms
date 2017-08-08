@@ -5,16 +5,10 @@ require_once dirname(__FILE__).'/../common/Database.php';
 require_once dirname(__FILE__).'/../config/Config.php';
 
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- * Description of Student
+ * 
  *
- * @author Yanik
+ * @author 
  */
 class TeacherService {
 
@@ -155,6 +149,22 @@ class TeacherService {
         $teachers = [];
         $i = 0;
         if( $statement = @Database::getInstance()->prepare("SELECT * FROM v_teachers")){
+            $statement->execute();
+            if($rows = $statement->get_result()){
+                while($row = $rows->fetch_assoc()){
+                    $teacher = self::mapObjectFromArray($row);
+                    $teachers[$i] = $teacher;
+                    $i++;
+                }
+            }
+        }
+        return $teachers;
+    }
+
+    public static function findLimit($limit){
+        $teachers = [];
+        $i = 0;
+        if( $statement = @Database::getInstance()->prepare("SELECT * FROM v_teachers order by id desc limit 0,$limit")){
             $statement->execute();
             if($rows = $statement->get_result()){
                 while($row = $rows->fetch_assoc()){

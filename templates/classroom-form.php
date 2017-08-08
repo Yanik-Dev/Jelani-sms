@@ -1,5 +1,5 @@
 
-<?php $title=(isset($_GET['id']))?'Edit Subject':"New Subject"; ?>
+<?php $title=(isset($_GET['id']))?'Edit Classroom':"New Classroom"; ?>
 <?php 
 include 'navigation.php';
 require_once dirname(__FILE__).'/../services/ClassroomService.php';
@@ -18,6 +18,19 @@ if(isset($_GET['id'])){
     $class = ClassroomService::findOne($_GET['id']);
 }
 
+$errors = [];
+$success = false;
+if(isset($_GET["code"])){
+    if($_GET["code"] == 403){
+        $errors[0] = "Server error. Please contact admin";
+    }
+    if($_GET["code"] == 409){
+        $errors[0] ="Classroom already exist";
+    }
+    if($_GET["code"] == 200){
+        $success = true;
+    }
+}
 ?>
 
 
@@ -26,7 +39,7 @@ if(isset($_GET['id'])){
 
 
            <div class="row"> 
-             <?= ClassroomComponent::classForm($class, $forms, $teachers, $subjects); ?>
+             <?= ClassroomComponent::classForm($class, $forms, $teachers, $subjects, $errors, $success); ?>
            </div> 
 
 </div>

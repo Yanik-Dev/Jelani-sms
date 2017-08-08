@@ -44,7 +44,6 @@ class  ClassroomComponent{
                 <td>'.$subjects[$i].'</td>
                 <td>
                  <a href="./classroom-form.php?id='.$class->getId().'" class="btn btn-primary btn-xs">Edit</a>
-                 <a href="./classroom-form.php?id='.$class->getId().'" class="btn btn-danger btn-xs">Delete</a>
                 </td>
             </tr>';
            $i++;
@@ -82,12 +81,13 @@ class  ClassroomComponent{
             </div>';
     }
     
-    public static function classForm ($class, $forms=[], $teachers=[], $subjects=[], $errors = []){
+    public static function classForm ($class, $forms=[], $teachers=[], $subjects=[], $errors = [], $success=false){
         $formOptions = "";
         $teacherOptions = "";
         $formTeacherOptions = "";
         $subjectOptions = "";
         $errorElement ="";
+        $errorMsg ="";
         #populate option with forms in dropdown menu
         foreach($teachers as $teacher){
             if($class->getTeacher() != null){
@@ -150,12 +150,12 @@ class  ClassroomComponent{
         if(count($errors)>0){
             $i=0;
             foreach ($errors as $err){
-              $errorMsg .= $i.'. '.$err.'\n';
+              $errorMsg .= $err;
               $i++;
             }
             $errorElement ='<div class="alert alert-danger  alert-dismissible" role="alert" id="err-alert">
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">Ã—</span></button>
-                            <strong>Oops Invalid Fields!</strong> Check form and try submitting again.
+                            <strong>Oops!</strong>
                             '.$errorMsg.'
                             </div>';
         }
@@ -171,16 +171,14 @@ class  ClassroomComponent{
                     <input type="hidden" name="id" value="'.(($class->getId()!=null) ?$class->getId(): '').'" >
                     <div class="section">                       
                         <div class="section-body">
-                            <div class="alert alert-danger  alert-dismissible" role="alert" style="display:none" id="error-alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span></button>
-                                <strong>Oops!</strong> There was an unexpected error 
-                             </div>
                             '.$errorElement.'
                             
-                            <div class="alert alert-success  alert-dismissible" style="display:none" role="alert" id="success-alert">
+                            '.(($success)?'
+                            <div class="alert alert-success  alert-dismissible" role="alert" >
                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span></button>
                                Inserted Successfully
-                            </div>
+                            </div>':'').'
+
                         <div class="form-group">
                             <label class="col-md-3 control-label"> Class name</label>
                             <div class="col-md-9">   

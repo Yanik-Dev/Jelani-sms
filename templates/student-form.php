@@ -24,7 +24,19 @@ if(isset($_GET['id'])){
     $guardians = GuardianService::findByStudent($_GET['id']);
     //$guardian= GuardianService::findOne($_GET['id'])
 }
-
+$errors = [];
+$success = false;
+if(isset($_GET["code"])){
+    if($_GET["code"] == 403){
+        $errors[0] = "Server error. Please contact admin";
+    }
+    if($_GET["code"] == 409){
+        $errors[0] ="Student already exist";
+    }
+    if($_GET["code"] == 200){
+        $success = true;
+    }
+}
 ?>
 
 
@@ -44,7 +56,7 @@ if(isset($_GET['id'])){
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="info">
            <div class="row"> 
-             <?= StudentComponent::studentForm($student, $classes); ?>
+             <?= StudentComponent::studentForm($student, $classes, $errors, $success); ?>
            </div>        
         </div>
         <?php if(isset($_GET['id'])): ?>
@@ -64,13 +76,12 @@ if(isset($_GET['id'])){
 <script>
   $().ready(function(){
       $.validate({
-          validateOnBlur : false,
-          modules : 'html5'
+          validateOnBlur : true,
+          modules : 'location, date, security, file',
       });
+
       /*$('#p').trigger('click');
       ('#pnew').trigger('click');*/
   });
-    $(function () {
-        $('#datetimepicker1').datetimepicker();
-    });
+   
 </script>

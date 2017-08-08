@@ -1,11 +1,5 @@
 <?php
 
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 class  StudentComponent{
     
     public static function studentDatagrid($students, $title=''){
@@ -22,7 +16,7 @@ class  StudentComponent{
                 <td>
                  <a href="./student-form.php?id='.$student->getId().'" class="btn btn-primary btn-xs">Edit</a>
                  <a href="../actions/student-actions.php?id='.$student->getId().'&action=delete" class="btn btn-danger btn-xs">Delete</a>
-                 <a href="button" class="btn btn-default btn-xs">Grade</a>
+                <!-- <a href="button" class="btn btn-default btn-xs">Grade</a>-->
              </td>
             </tr>';
         }
@@ -64,9 +58,10 @@ class  StudentComponent{
             </div>';
     }
     
-    public static function studentForm ($student, $classes=[], $errors = []){
+    public static function studentForm ($student, $classes=[], $errors = [], $success=false){
         $options = "";
         $errorElement ="";
+        $errorMsg ="";
         
         #populate option with classes for dropdown menu
         foreach($classes as $class){
@@ -83,12 +78,12 @@ class  StudentComponent{
         if(count($errors)>0){
             $i=0;
             foreach ($errors as $err){
-              $errorMsg .= $i.'. '.$err.'\n';
+              $errorMsg .= $err;
               $i++;
             }
             $errorElement ='<div class="alert alert-danger  alert-dismissible" role="alert" id="err-alert">
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">Ã—</span></button>
-                            <strong>Oops Invalid Fields!</strong> Check form and try submitting again.
+                            <strong>Oops</strong>
                             '.$errorMsg.'
                             </div>';
         }
@@ -104,16 +99,14 @@ class  StudentComponent{
                         class="form form-horizontal ajax-data">
                     <div class="section">                       
                         <div class="section-body">
-                            <div class="alert alert-danger  alert-dismissible" role="alert" style="display:none" id="error-alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span></button>
-                                <strong>Oops!</strong> There was an unexpected error 
-                             </div>
-                            '.$errorElement.'
                             
-                            <div class="alert alert-success  alert-dismissible" style="display:none" role="alert" id="success-alert">
+                            '.$errorElement.'
+                            '.(($success)?'
+                            <div class="alert alert-success  alert-dismissible"  role="alert" >
                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">x</span></button>
                                Inserted Successfully
-                            </div>
+                            </div>':' ').'
+                            
                          <div class="form-group">
                             <input type="hidden" name = "id" value="'.(($student->getId()!=null)?$student->getId():'').'">
                             <div  class="col-md-3"> 
@@ -124,7 +117,10 @@ class  StudentComponent{
                             </div>
                             <div class="col-md-9">   
                                 <div class="col-md-12">
-                                <input type="file" name="file" id="exampleInputFile" onchange="previewImage(event)">
+                                <input type="file"  data-validation="mime" 
+                                    data-validation-allowing="jpg, png" 
+                                    name="file" id="exampleInputFile" 
+                                    onchange="previewImage(event)">
                                 <p class="help-block">Select a photo to upload</p>
                                 </div>
                             </div>
@@ -137,7 +133,7 @@ class  StudentComponent{
                                     <input type="text" 
                                        value="'.(($student->getSRN()!=null)?$student->getSRN():'').'"
                                        class="form-control"  
-                                       data-validation-length="10-11" 
+                                       data-validation-length="0-11" 
                                        data-validation="length" 
                                        name="srn" 
                                        placeholder="SRN">
@@ -153,20 +149,30 @@ class  StudentComponent{
                                        value="'.(($student->getFirstName()!=null)?$student->getFirstName():'').'"
                                        class="form-control" 
                                        name="first_name" 
-                                       placeholder="First Name">
+                                       data-validation="length required alphanumeric"
+                                       data-validation-allowing="-" 
+                                       data-validation-length="2-15" 
+                                       placeholder="First Name"
+                                       >
                             </div>
                             <div class="col-md-4">
                                 <input type="text" 
                                        value="'.(($student->getLastName()!=null)?$student->getLastName():'').'"
                                        class="form-control" 
-                                       name="last_name" 
+                                       name="last_name"
+                                       data-validation="length required alphanumeric"
+                                       data-validation-allowing="-" 
+                                       data-validation-length="2-15"  
                                        placeholder="Surname">
                             </div>
                             <div class="col-md-4">
                                 <input type="text" 
-                                       value="'.(($student->getMiddleName()!=null)?$student->getMiddleName():'').'"
+                                       value="'.(($student->getMiddleName()!=null)?$student->getMiddleName():' ').'"
                                        class="form-control" 
                                        name="middle_name" 
+                                       data-validation="length alphanumeric"
+                                       data-validation-allowing=" " 
+                                       data-validation-length="0-15" 
                                        placeholder="Middle Name">
                             </div>
                             </div>
@@ -175,11 +181,9 @@ class  StudentComponent{
                             <label class="col-md-3 control-label">Date of Birth</label>
                             <div class="col-md-9">
                                <div class="col-md-6">
-                                    <div class="input-group date" id="datetimepicker1" style="z-index: 99999999">
-                                        <input type="text" name="date_of_birth" class="form-control" />
-                                        <span class="input-group-addon">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
+                                    <div class="" style="z-index: 99999999">
+                                        <input type="date" name="date_of_birth" data-validation="birthdate" class="form-control" />
+                                       
                                     </div>
                                 </div>
                             </div>
@@ -193,7 +197,7 @@ class  StudentComponent{
                                            name="gender" 
                                            id="radio10" 
                                            value="Male"
-                                           '.(($student->getGender()!=null)?($student->getGender()=='Male')?"checked='checked'":"" :"").'
+                                           '.(($student->getGender()!=null)?($student->getGender()=='Male')?"checked='checked'":"" :"checked='checked'").'
                                            >
                                     <label for="radio10">
                                         Male
@@ -231,7 +235,7 @@ class  StudentComponent{
                                          value="'.(($student->getEmail()!=null)?$student->getEmail():'').'"
                                          name="email" 
                                          class="form-control" 
-                                         placeholder="johndoe@example.com">
+                                         placeholder="bigboy@example.com">
                                 </div>
                             </div>
                         </div>
