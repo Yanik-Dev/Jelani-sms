@@ -48,8 +48,6 @@ if ($db_selected){
             header("Location: ./setup.php?account=true");
             exit;
        }
-       header("Location: ./login.php");
-       exit;
     }else{  
       echo 'Error creating database: ' . mysqli_error($link) . "\n";
       mysqli_close($link);

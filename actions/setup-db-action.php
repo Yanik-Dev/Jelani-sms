@@ -126,7 +126,5 @@ if(isset($_GET['account'])){
                 die();
             }
     }
-    header("Location: ../templates/setup.php?account=true");
-    exit;
 }
 header("Location: ../templates/login.php");
